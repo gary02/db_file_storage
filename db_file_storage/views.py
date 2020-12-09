@@ -1,6 +1,7 @@
 # third party
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext as _
+from django.utils.encoding import escape_uri_path
 from wsgiref.util import FileWrapper
 # project
 from db_file_storage.storage import DatabaseFileStorage
@@ -23,7 +24,7 @@ def get_file(request, add_attachment_headers, extra_headers=None):
     )
     response['Content-Length'] = _file.tell()
     if add_attachment_headers:
-        response['Content-Disposition'] = 'attachment; filename=%(name)s' % {'name': _file.filename}
+        response['Content-Disposition'] = "attachment; filename*=UTF-8''{}".format(escape_uri_path(_file.filename))
 
     for name, value in (extra_headers or {}).items():
         response[name] = value
